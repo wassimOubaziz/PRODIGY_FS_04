@@ -5,7 +5,7 @@ import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useState } from "react";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
@@ -13,18 +13,18 @@ const Signup = () => {
   const toast = useToast();
   const history = useHistory();
 
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [confirmpassword, setConfirmpassword] = useState();
-  const [password, setPassword] = useState();
-  const [pic, setPic] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmpassword, setConfirmpassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [pic, setPic] = useState("");
   const [picLoading, setPicLoading] = useState(false);
 
   const submitHandler = async () => {
     setPicLoading(true);
     if (!name || !email || !password || !confirmpassword) {
       toast({
-        title: "Please Fill all the Feilds",
+        title: "Please Fill All Fields",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -41,9 +41,10 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
+      setPicLoading(false);
       return;
     }
-    console.log(name, email, password, pic);
+
     try {
       const config = {
         headers: {
@@ -52,15 +53,9 @@ const Signup = () => {
       };
       const { data } = await axios.post(
         "/api/user",
-        {
-          name,
-          email,
-          password,
-          pic,
-        },
+        { name, email, password, pic },
         config
       );
-      console.log(data);
       toast({
         title: "Registration Successful",
         status: "success",
@@ -73,8 +68,9 @@ const Signup = () => {
       history.push("/chats");
     } catch (error) {
       toast({
-        title: "Error Occured!",
-        description: error.response.data.message,
+        title: "Error Occurred!",
+        description:
+          error.response?.data?.message || "An unexpected error occurred",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -86,7 +82,7 @@ const Signup = () => {
 
   const postDetails = (pics) => {
     setPicLoading(true);
-    if (pics === undefined) {
+    if (!pics) {
       toast({
         title: "Please Select an Image!",
         status: "warning",
@@ -94,9 +90,9 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
+      setPicLoading(false);
       return;
     }
-    console.log(pics);
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
       const data = new FormData();
       data.append("file", pics);
@@ -109,50 +105,62 @@ const Signup = () => {
         .then((res) => res.json())
         .then((data) => {
           setPic(data.url.toString());
-          console.log(data.url.toString());
           setPicLoading(false);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           setPicLoading(false);
         });
     } else {
       toast({
-        title: "Please Select an Image!",
+        title: "Please Select a Valid Image Format!",
         status: "warning",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
       setPicLoading(false);
-      return;
     }
   };
 
   return (
-    <VStack spacing="5px">
-      <FormControl id="first-name" isRequired>
+    <VStack
+      spacing="15px"
+      p={5}
+      borderWidth="1px"
+      borderRadius="md"
+      boxShadow="md"
+      maxWidth="400px"
+      mx="auto"
+    >
+      <FormControl id="signup-name" isRequired>
         <FormLabel>Name</FormLabel>
         <Input
+          value={name}
           placeholder="Enter Your Name"
           onChange={(e) => setName(e.target.value)}
+          focusBorderColor="blue.500"
         />
       </FormControl>
-      <FormControl id="email" isRequired>
+      <FormControl id="signup-email" isRequired>
         <FormLabel>Email Address</FormLabel>
         <Input
           type="email"
+          value={email}
           placeholder="Enter Your Email Address"
           onChange={(e) => setEmail(e.target.value)}
+          focusBorderColor="blue.500"
         />
       </FormControl>
-      <FormControl id="password" isRequired>
+      <FormControl id="signup-password" isRequired>
         <FormLabel>Password</FormLabel>
         <InputGroup size="md">
           <Input
+            value={password}
             type={show ? "text" : "password"}
             placeholder="Enter Password"
             onChange={(e) => setPassword(e.target.value)}
+            focusBorderColor="blue.500"
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -161,13 +169,15 @@ const Signup = () => {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <FormControl id="password" isRequired>
+      <FormControl id="signup-confirmpassword" isRequired>
         <FormLabel>Confirm Password</FormLabel>
         <InputGroup size="md">
           <Input
+            value={confirmpassword}
             type={show ? "text" : "password"}
-            placeholder="Confirm password"
+            placeholder="Confirm Password"
             onChange={(e) => setConfirmpassword(e.target.value)}
+            focusBorderColor="blue.500"
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -176,8 +186,8 @@ const Signup = () => {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <FormControl id="pic">
-        <FormLabel>Upload your Picture</FormLabel>
+      <FormControl id="signup-pic">
+        <FormLabel>Upload Your Picture</FormLabel>
         <Input
           type="file"
           p={1.5}
@@ -188,7 +198,7 @@ const Signup = () => {
       <Button
         colorScheme="blue"
         width="100%"
-        style={{ marginTop: 15 }}
+        mt={4}
         onClick={submitHandler}
         isLoading={picLoading}
       >

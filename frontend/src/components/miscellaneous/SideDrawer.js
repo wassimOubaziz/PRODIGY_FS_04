@@ -82,8 +82,9 @@ function SideDrawer() {
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
+      setLoading(false);
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: "Failed to Load the Search Results",
         status: "error",
         duration: 5000,
@@ -109,6 +110,7 @@ function SideDrawer() {
       setLoadingChat(false);
       onClose();
     } catch (error) {
+      setLoadingChat(false);
       toast({
         title: "Error fetching the chat",
         description: error.message,
@@ -128,8 +130,8 @@ function SideDrawer() {
         alignItems="center"
         bg="white"
         w="100%"
-        p="5px 10px 5px 10px"
-        borderWidth="5px"
+        p="5px 10px"
+        borderWidth="1px"
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost" onClick={onOpen}>
@@ -140,7 +142,7 @@ function SideDrawer() {
           </Button>
         </Tooltip>
         <Text fontSize="2xl" fontFamily="Work sans">
-          Talk-A-Tive
+          Wassy-Talk
         </Text>
         <div>
           <Menu>
@@ -152,7 +154,7 @@ function SideDrawer() {
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
             <MenuList pl={2}>
-              {!notification.length && "No New Messages"}
+              {!notification.length && <MenuItem>No New Messages</MenuItem>}
               {notification.map((notif) => (
                 <MenuItem
                   key={notif._id}
@@ -179,7 +181,7 @@ function SideDrawer() {
             </MenuButton>
             <MenuList>
               <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>{" "}
+                <MenuItem>My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>
@@ -205,7 +207,7 @@ function SideDrawer() {
             {loading ? (
               <ChatLoading />
             ) : (
-              searchResult?.map((user) => (
+              searchResult.map((user) => (
                 <UserListItem
                   key={user._id}
                   user={user}
