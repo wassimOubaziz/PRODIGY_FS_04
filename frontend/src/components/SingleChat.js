@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Import axios
-import { FormControl } from "@chakra-ui/form-control";
-import { Input } from "@chakra-ui/input";
-import { Box, Text } from "@chakra-ui/layout";
+import axios from "axios";
+import { FormControl, Input, Button, Box, Text } from "@chakra-ui/react";
 import { IconButton, Spinner, useToast } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import ProfileModal from "./miscellaneous/ProfileModal";
@@ -12,9 +10,11 @@ import animationData from "../animations/typing.json";
 import io from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
-import { getSender, getSenderFull } from "../config/ChatLogics"; // Import getSender and getSenderFull
+import { getSender, getSenderFull } from "../config/ChatLogics";
+import EmojiPicker from "emoji-picker-react";
+import ProfileModify from "./miscellaneous/ProfileModify";
 
-const ENDPOINT = "http://localhost:5000"; // "https://Wassy-Talk.herokuapp.com"; -> After deployment
+const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -24,6 +24,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const toast = useToast();
 
   const defaultOptions = {
@@ -104,6 +105,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 
+  const handleEmojiClick = (emojiObject) => {
+    setNewMessage((prevMsg) => prevMsg + emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };
+
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
@@ -111,13 +117,21 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
 
-    // eslint-disable-next-line
+    // Cleanup function to disconnect the socket
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
     fetchMessages();
     selectedChatCompare = selectedChat;
-    // eslint-disable-next-line
+
+    // Cleanup function to avoid setting state on an unmounted component
+    return () => {
+      setMessages([]);
+      setLoading(false);
+    };
   }, [selectedChat]);
 
   useEffect(() => {
@@ -134,6 +148,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setMessages([...messages, newMessageReceived]);
       }
     });
+
+    // Cleanup function to avoid setting state on an unmounted component
+    return () => {
+      socket.off("message received");
+    };
   });
 
   const typingHandler = (e) => {
@@ -162,7 +181,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       {selectedChat ? (
         <>
           <Text
-            fontSize={{ base: "28px", md: "30px" }}
+            fontSize={{ base: "24px", md: "26px" }}
             pb={3}
             px={2}
             w="100%"
@@ -181,9 +200,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               (!selectedChat.isGroupChat ? (
                 <>
                   {getSender(user, selectedChat.users)}
-                  <ProfileModal
-                    user={getSenderFull(user, selectedChat.users)}
-                  />
+                  {user.isAdmin ? (
+                    <ProfileModify
+                      user={getSenderFull(user, selectedChat.users)}
+                      admin={user}
+                    />
+                  ) : (
+                    <ProfileModal
+                      user={getSenderFull(user, selectedChat.users)}
+                    />
+                  )}
                 </>
               ) : (
                 <>
@@ -206,6 +232,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             h="100%"
             borderRadius="lg"
             overflowY="hidden"
+            position="relative" // Set relative position here
           >
             {loading ? (
               <Spinner
@@ -237,15 +264,31 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   />
                 </div>
               ) : null}
-              <Input
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message..."
-                value={newMessage}
-                onChange={typingHandler}
-                borderColor="#4A90E2"
-                _focus={{ borderColor: "#4A90E2" }}
-              />
+              <Box d="flex" alignItems="center" position="relative">
+                {showEmojiPicker && (
+                  <Box position="absolute" bottom="60px" left="0" zIndex="10">
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                  </Box>
+                )}
+                <Button
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  borderRadius="full"
+                  bg="#E0E0E0"
+                  mr={2}
+                >
+                  😀
+                </Button>
+                <Input
+                  variant="filled"
+                  bg="#E0E0E0"
+                  placeholder="Enter a message..."
+                  value={newMessage}
+                  onChange={typingHandler}
+                  borderColor="#4A90E2"
+                  _focus={{ borderColor: "#4A90E2" }}
+                  fontSize="sm"
+                />
+              </Box>
             </FormControl>
           </Box>
         </>
