@@ -13,11 +13,9 @@ const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
-
   const toast = useToast();
 
   const fetchChats = async () => {
-    // console.log(user._id);
     try {
       const config = {
         headers: {
@@ -29,8 +27,8 @@ const MyChats = ({ fetchAgain }) => {
       setChats(data);
     } catch (error) {
       toast({
-        title: "Error Occured!",
-        description: "Failed to Load the chats",
+        title: "Error Occurred!",
+        description: "Failed to load the chats.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -42,7 +40,6 @@ const MyChats = ({ fetchAgain }) => {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-    // eslint-disable-next-line
   }, [fetchAgain]);
 
   return (
@@ -51,10 +48,11 @@ const MyChats = ({ fetchAgain }) => {
       flexDir="column"
       alignItems="center"
       p={3}
-      bg="white"
+      bg="#F5F7F9" // Background color for the chat box
       w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
+      borderColor="#E0E0E0" // Light gray border
     >
       <Box
         pb={3}
@@ -66,12 +64,15 @@ const MyChats = ({ fetchAgain }) => {
         justifyContent="space-between"
         alignItems="center"
       >
-        My Chats
+        <Text color="#4A4A4A">My Chats</Text> {/* Dark gray text */}
         <GroupChatModal>
           <Button
             d="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             rightIcon={<AddIcon />}
+            bg="#7ED321" // Lime green background
+            color="white"
+            _hover={{ bg: "#6AB21F" }} // Darker lime green on hover
           >
             New Group Chat
           </Button>
@@ -81,35 +82,41 @@ const MyChats = ({ fetchAgain }) => {
         d="flex"
         flexDir="column"
         p={3}
-        bg="#F8F8F8"
+        bg="#FFFFFF" // White background for chat list
         w="100%"
         h="100%"
         borderRadius="lg"
         overflowY="hidden"
+        borderWidth="1px"
+        borderColor="#E0E0E0" // Light gray border
       >
         {chats ? (
-          <Stack overflowY="scroll">
+          <Stack spacing={2} overflowY="scroll">
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={selectedChat === chat ? "#50E3C2" : "#E8E8E8"} // Teal green for selected chat
+                color={selectedChat === chat ? "white" : "#4A4A4A"} // Dark gray text for non-selected chats
                 px={3}
                 py={2}
                 borderRadius="lg"
                 key={chat._id}
+                borderWidth="1px"
+                borderColor={selectedChat === chat ? "#4A90E2" : "transparent"} // Border color for selected chat
               >
-                <Text>
+                <Text fontWeight="bold">
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
                     : chat.chatName}
                 </Text>
                 {chat.latestMessage && (
-                  <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
+                  <Text fontSize="xs" color="#4A4A4A">
+                    {" "}
+                    {/* Dark gray text */}
+                    <b>{chat.latestMessage.sender.name}:</b>{" "}
+                    {chat.latestMessage.content.length > 30
+                      ? chat.latestMessage.content.substring(0, 31) + "..."
                       : chat.latestMessage.content}
                   </Text>
                 )}

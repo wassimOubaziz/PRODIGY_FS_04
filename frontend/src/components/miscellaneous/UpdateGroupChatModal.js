@@ -15,6 +15,7 @@ import {
   Box,
   IconButton,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
@@ -24,7 +25,7 @@ import UserListItem from "../userAvatar/UserListItem";
 
 const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [groupChatName, setGroupChatName] = useState();
+  const [groupChatName, setGroupChatName] = useState("");
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -36,6 +37,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {
+      setSearchResult([]);
       return;
     }
 
@@ -46,13 +48,22 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
-      console.log(data);
+      const { data } = await axios.get(`/api/user?search=${query}`, config);
       setLoading(false);
+      if (data.length === 0) {
+        toast({
+          title: "No Users Found",
+          description: "Try a different search term.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+          position: "top-left",
+        });
+      }
       setSearchResult(data);
     } catch (error) {
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: "Failed to Load the Search Results",
         status: "error",
         duration: 5000,
@@ -82,14 +93,12 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
         config
       );
 
-      console.log(data._id);
-      // setSelectedChat("");
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       setRenameLoading(false);
     } catch (error) {
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: error.response.data.message,
         status: "error",
         duration: 5000,
@@ -145,7 +154,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       setLoading(false);
     } catch (error) {
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: error.response.data.message,
         status: "error",
         duration: 5000,
@@ -154,7 +163,6 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       });
       setLoading(false);
     }
-    setGroupChatName("");
   };
 
   const handleRemove = async (user1) => {
@@ -191,7 +199,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       setLoading(false);
     } catch (error) {
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: error.response.data.message,
         status: "error",
         duration: 5000,
@@ -200,7 +208,12 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       });
       setLoading(false);
     }
-    setGroupChatName("");
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(search);
+    }
   };
 
   return (
@@ -253,19 +266,22 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
                 placeholder="Add User to group"
                 mb={1}
                 onChange={(e) => handleSearch(e.target.value)}
+                onKeyDown={handleKeyDown} // Add this line to handle Enter key
               />
             </FormControl>
 
             {loading ? (
               <Spinner size="lg" />
-            ) : (
-              searchResult?.map((user) => (
+            ) : searchResult.length > 0 ? (
+              searchResult.map((user) => (
                 <UserListItem
                   key={user._id}
                   user={user}
                   handleFunction={() => handleAddUser(user)}
                 />
               ))
+            ) : (
+              <Text>No users found</Text>
             )}
           </ModalBody>
           <ModalFooter>

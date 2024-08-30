@@ -28,21 +28,41 @@ function Homepage() {
         d="flex"
         justifyContent="center"
         p={3}
-        bg="white"
+        bg="#F5F7F9" // Background Color
         w="100%"
         m="40px 0 15px 0"
         borderRadius="lg"
         borderWidth="1px"
+        borderColor="#D2D2D2" // Border Color
       >
-        <Text fontSize="4xl" fontFamily="Work sans">
+        <Text fontSize="4xl" fontFamily="Work sans" color="#4A4A4A">
           Wassy-Talk
         </Text>
       </Box>
-      <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
+      <Box
+        bg="white"
+        w="100%"
+        p={4}
+        borderRadius="lg"
+        borderWidth="1px"
+        borderColor="#D2D2D2"
+      >
         <Tabs isFitted variant="soft-rounded">
           <TabList mb="1em">
-            <Tab>Login</Tab>
-            <Tab>Sign Up</Tab>
+            <Tab
+              _selected={{ color: "white", bg: "#7ED321" }} // Selected Tab Color
+              borderRadius="md"
+              _hover={{ bg: "#6BCC1F" }} // Hover Color
+            >
+              Login
+            </Tab>
+            <Tab
+              _selected={{ color: "white", bg: "#7ED321" }} // Selected Tab Color
+              borderRadius="md"
+              _hover={{ bg: "#6BCC1F" }} // Hover Color
+            >
+              Sign Up
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel>

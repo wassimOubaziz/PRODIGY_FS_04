@@ -80,6 +80,16 @@ function SideDrawer() {
       const { data } = await axios.get(`/api/user?search=${search}`, config);
 
       setLoading(false);
+      if (data.length === 0) {
+        toast({
+          title: "No Users Found",
+          description: "Try a different search term.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+          position: "top-left",
+        });
+      }
       setSearchResult(data);
     } catch (error) {
       setLoading(false);
@@ -122,20 +132,30 @@ function SideDrawer() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <>
       <Box
         d="flex"
         justifyContent="space-between"
         alignItems="center"
-        bg="white"
+        bg="gray.100"
         w="100%"
         p="5px 10px"
         borderWidth="1px"
+        borderColor="gray.200"
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
-          <Button variant="ghost" onClick={onOpen}>
-            <i className="fas fa-search"></i>
+          <Button
+            variant="ghost"
+            onClick={onOpen}
+            leftIcon={<i className="fas fa-search"></i>}
+          >
             <Text d={{ base: "none", md: "flex" }} px={4}>
               Search User
             </Text>
@@ -146,7 +166,7 @@ function SideDrawer() {
         </Text>
         <div>
           <Menu>
-            <MenuButton p={1}>
+            <MenuButton p={1} position="relative">
               <NotificationBadge
                 count={notification.length}
                 effect={Effect.SCALE}
@@ -190,7 +210,7 @@ function SideDrawer() {
         </div>
       </Box>
 
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen} size="sm">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
@@ -201,12 +221,15 @@ function SideDrawer() {
                 mr={2}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={handleKeyDown} // Add this line to handle Enter key
               />
-              <Button onClick={handleSearch}>Go</Button>
+              <Button onClick={() => handleSearch()} colorScheme="blue">
+                Search
+              </Button>
             </Box>
             {loading ? (
               <ChatLoading />
-            ) : (
+            ) : searchResult.length ? (
               searchResult.map((user) => (
                 <UserListItem
                   key={user._id}
@@ -214,6 +237,8 @@ function SideDrawer() {
                   handleFunction={() => accessChat(user._id)}
                 />
               ))
+            ) : (
+              <Text>No users found</Text>
             )}
             {loadingChat && <Spinner ml="auto" d="flex" />}
           </DrawerBody>

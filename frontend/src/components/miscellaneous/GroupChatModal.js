@@ -12,6 +12,7 @@ import {
   Input,
   useToast,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
@@ -21,7 +22,7 @@ import UserListItem from "../userAvatar/UserListItem";
 
 const GroupChatModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [groupChatName, setGroupChatName] = useState();
+  const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -48,6 +49,7 @@ const GroupChatModal = ({ children }) => {
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {
+      setSearchResult([]);
       return;
     }
 
@@ -58,19 +60,19 @@ const GroupChatModal = ({ children }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
-      console.log(data);
-      setLoading(false);
+      const { data } = await axios.get(`/api/user?search=${query}`, config);
       setSearchResult(data);
+      setLoading(false);
     } catch (error) {
       toast({
-        title: "Error Occured!",
-        description: "Failed to Load the Search Results",
+        title: "Error Occurred!",
+        description: "Failed to load the search results.",
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom-left",
       });
+      setLoading(false);
     }
   };
 
@@ -79,9 +81,9 @@ const GroupChatModal = ({ children }) => {
   };
 
   const handleSubmit = async () => {
-    if (!groupChatName || !selectedUsers) {
+    if (!groupChatName || !selectedUsers.length) {
       toast({
-        title: "Please fill all the feilds",
+        title: "Please fill all the fields",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -137,26 +139,33 @@ const GroupChatModal = ({ children }) => {
             fontFamily="Work sans"
             d="flex"
             justifyContent="center"
+            bg="#F5F7F9" // Background Color
+            borderBottom="1px"
+            borderColor="#D2D2D2" // Border Color
           >
             Create Group Chat
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody d="flex" flexDir="column" alignItems="center">
-            <FormControl>
+          <ModalBody d="flex" flexDir="column" alignItems="center" p={4}>
+            <FormControl mb={3}>
               <Input
                 placeholder="Chat Name"
-                mb={3}
+                value={groupChatName}
                 onChange={(e) => setGroupChatName(e.target.value)}
+                borderColor="#D2D2D2"
+                _focus={{ borderColor: "#7ED321" }} // Focus Border Color
               />
             </FormControl>
-            <FormControl>
+            <FormControl mb={4}>
               <Input
                 placeholder="Add Users eg: John, Piyush, Jane"
-                mb={1}
+                value={search}
                 onChange={(e) => handleSearch(e.target.value)}
+                borderColor="#D2D2D2"
+                _focus={{ borderColor: "#7ED321" }} // Focus Border Color
               />
             </FormControl>
-            <Box w="100%" d="flex" flexWrap="wrap">
+            <Box w="100%" d="flex" flexWrap="wrap" mb={4}>
               {selectedUsers.map((u) => (
                 <UserBadgeItem
                   key={u._id}
@@ -166,8 +175,7 @@ const GroupChatModal = ({ children }) => {
               ))}
             </Box>
             {loading ? (
-              // <ChatLoading />
-              <div>Loading...</div>
+              <Spinner size="lg" color="#7ED321" />
             ) : (
               searchResult
                 ?.slice(0, 4)
@@ -181,7 +189,7 @@ const GroupChatModal = ({ children }) => {
             )}
           </ModalBody>
           <ModalFooter>
-            <Button onClick={handleSubmit} colorScheme="blue">
+            <Button colorScheme="green" width="100%" onClick={handleSubmit}>
               Create Chat
             </Button>
           </ModalFooter>

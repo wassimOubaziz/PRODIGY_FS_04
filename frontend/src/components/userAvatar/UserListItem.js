@@ -15,22 +15,23 @@ const UserListItem = ({ handleFunction, user }) => {
       d="flex"
       alignItems="center"
       color="black"
-      px={3}
-      py={2}
+      px={4}
+      py={3}
       mb={2}
       borderRadius="lg"
+      aria-label={`Select ${user.name}`}
     >
       <Avatar
-        mr={2}
+        mr={3}
         size="sm"
         cursor="pointer"
         name={user.name}
         src={user.pic}
       />
       <Box>
-        <Text>{user.name}</Text>
-        <Text fontSize="xs">
-          <b>Email : </b>
+        <Text fontWeight="bold">{user.name}</Text>
+        <Text fontSize="sm" color="gray.600">
+          <b>Email: </b>
           {user.email}
         </Text>
       </Box>

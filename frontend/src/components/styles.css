@@ -1,6 +1,26 @@
+/* Add basic styling to the messages container */
 .messages {
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
-  scrollbar-width: none;
+  overflow-y: auto; /* Changed from 'scroll' to 'auto' to avoid always-visible scrollbar */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.messages::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+/* Optionally add padding/margin to handle spacing around the messages */
+.messages {
+  padding: 10px; /* Adjust as needed */
+}
+
+/* Optional: Style the individual message bubbles */
+.message-bubble {
+  background-color: #e0e0e0; /* Light grey background */
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
+  max-width: 70%; /* Adjust based on design needs */
 }

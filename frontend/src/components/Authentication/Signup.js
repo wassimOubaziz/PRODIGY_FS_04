@@ -132,62 +132,87 @@ const Signup = () => {
       boxShadow="md"
       maxWidth="400px"
       mx="auto"
+      bg="#F5F7F9" // Background Color
     >
       <FormControl id="signup-name" isRequired>
-        <FormLabel>Name</FormLabel>
+        <FormLabel color="#4A4A4A">Name</FormLabel> {/* Text Color */}
         <Input
           value={name}
           placeholder="Enter Your Name"
           onChange={(e) => setName(e.target.value)}
-          focusBorderColor="blue.500"
+          bg="white"
+          borderColor="#D2D2D2" // Border Color
+          _hover={{ borderColor: "#50E3C2" }} // Secondary Color
+          _focus={{ borderColor: "#50E3C2", boxShadow: "0 0 0 1px #50E3C2" }} // Secondary Color
         />
       </FormControl>
       <FormControl id="signup-email" isRequired>
-        <FormLabel>Email Address</FormLabel>
+        <FormLabel color="#4A4A4A">Email Address</FormLabel> {/* Text Color */}
         <Input
           type="email"
           value={email}
           placeholder="Enter Your Email Address"
           onChange={(e) => setEmail(e.target.value)}
-          focusBorderColor="blue.500"
+          bg="white"
+          borderColor="#D2D2D2" // Border Color
+          _hover={{ borderColor: "#50E3C2" }} // Secondary Color
+          _focus={{ borderColor: "#50E3C2", boxShadow: "0 0 0 1px #50E3C2" }} // Secondary Color
         />
       </FormControl>
       <FormControl id="signup-password" isRequired>
-        <FormLabel>Password</FormLabel>
+        <FormLabel color="#4A4A4A">Password</FormLabel> {/* Text Color */}
         <InputGroup size="md">
           <Input
             value={password}
             type={show ? "text" : "password"}
             placeholder="Enter Password"
             onChange={(e) => setPassword(e.target.value)}
-            focusBorderColor="blue.500"
+            bg="white"
+            borderColor="#D2D2D2" // Border Color
+            _hover={{ borderColor: "#50E3C2" }} // Secondary Color
+            _focus={{ borderColor: "#50E3C2", boxShadow: "0 0 0 1px #50E3C2" }} // Secondary Color
           />
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
+            <Button
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+              bg="transparent"
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>
       </FormControl>
       <FormControl id="signup-confirmpassword" isRequired>
-        <FormLabel>Confirm Password</FormLabel>
+        <FormLabel color="#4A4A4A">Confirm Password</FormLabel>{" "}
+        {/* Text Color */}
         <InputGroup size="md">
           <Input
             value={confirmpassword}
             type={show ? "text" : "password"}
             placeholder="Confirm Password"
             onChange={(e) => setConfirmpassword(e.target.value)}
-            focusBorderColor="blue.500"
+            bg="white"
+            borderColor="#D2D2D2" // Border Color
+            _hover={{ borderColor: "#50E3C2" }} // Secondary Color
+            _focus={{ borderColor: "#50E3C2", boxShadow: "0 0 0 1px #50E3C2" }} // Secondary Color
           />
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
+            <Button
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+              bg="transparent"
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>
       </FormControl>
       <FormControl id="signup-pic">
-        <FormLabel>Upload Your Picture</FormLabel>
+        <FormLabel color="#4A4A4A">Upload Your Picture</FormLabel>{" "}
+        {/* Text Color */}
         <Input
           type="file"
           p={1.5}
@@ -196,11 +221,14 @@ const Signup = () => {
         />
       </FormControl>
       <Button
-        colorScheme="blue"
+        bg="#7ED321" // Button Color
+        color="white"
         width="100%"
         mt={4}
         onClick={submitHandler}
         isLoading={picLoading}
+        loadingText="Signing Up..."
+        _hover={{ bg: "#6BCC1F" }} // Darker Button Color
       >
         Sign Up
       </Button>
