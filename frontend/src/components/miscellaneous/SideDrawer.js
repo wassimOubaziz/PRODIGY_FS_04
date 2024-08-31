@@ -132,12 +132,6 @@ function SideDrawer() {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
   return (
     <>
       <Box
@@ -221,7 +215,6 @@ function SideDrawer() {
                 mr={2}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={handleKeyDown} // Add this line to handle Enter key
               />
               <Button onClick={() => handleSearch()} colorScheme="blue">
                 Search
