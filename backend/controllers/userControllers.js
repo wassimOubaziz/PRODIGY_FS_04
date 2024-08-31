@@ -179,26 +179,26 @@ const removeAccount = asyncHandler(async (req, res) => {
   const { userId } = req.body; // Include userId from request body
 
   try {
-    const user =
-      userId && req.user.isAdmin
-        ? await User.findById(userId)
-        : await User.findById(req.user.id); // Find by userId if admin, otherwise by logged-in user ID
+    // const user =
+    //   userId && req.user.isAdmin
+    //     ? await User.findById(userId)
+    //     : await User.findById(req.user.id); // Find by userId if admin, otherwise by logged-in user ID
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
 
-    if (user.pic) {
-      try {
-        const publicId = user.pic.split("/").pop().split(".")[0]; // Extract public_id
-        await cloudinary.v2.uploader.destroy(publicId);
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
+    // if (user.pic) {
+    //   try {
+    //     const publicId = user.pic.split("/").pop().split(".")[0]; // Extract public_id
+    //     await cloudinary.v2.uploader.destroy(publicId);
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   }
+    // }
 
-    await User.findByIdAndRemove(user._id);
-    res.json({ message: "Account removed successfully" });
+    // await User.findByIdAndRemove(user._id);
+    res.json({ message: "Account removed successfully in the future" });
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");

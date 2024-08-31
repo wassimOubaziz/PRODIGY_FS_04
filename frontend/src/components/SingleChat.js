@@ -15,6 +15,7 @@ import animationData from "../animations/typing.json";
 import io from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
+import ProfileModify from "./miscellaneous/ProfileModify";
 const ENDPOINT = "http://localhost:5000"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
 var socket, selectedChatCompare;
 
@@ -181,9 +182,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               (!selectedChat.isGroupChat ? (
                 <>
                   {getSender(user, selectedChat.users)}
-                  <ProfileModal
-                    user={getSenderFull(user, selectedChat.users)}
-                  />
+                  {user.isAdmin ? (
+                    <ProfileModify
+                      user={getSenderFull(user, selectedChat.users)}
+                      admin={user}
+                    />
+                  ) : (
+                    <ProfileModal
+                      user={getSenderFull(user, selectedChat.users)}
+                    />
+                  )}
                 </>
               ) : (
                 <>
